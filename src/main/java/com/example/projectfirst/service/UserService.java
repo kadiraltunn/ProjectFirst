@@ -25,7 +25,7 @@ public class UserService {
         return userRepo.save(newUser);
     }
 
-    public UserEntity getOneUser(Long userId) {
+    public UserEntity getOneUserById(Long userId) {
         return userRepo.findById(userId).orElse(null);
     }
 

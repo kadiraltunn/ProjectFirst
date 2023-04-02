@@ -33,7 +33,7 @@ public class PostService {
     }
 
     public PostEntity createOnePost(PostCreateDTO newPostDTO) {
-        UserEntity userEntity = userService.getOneUser(newPostDTO.getUserId());
+        UserEntity userEntity = userService.getOneUserById(newPostDTO.getUserId());
         if (userEntity == null)
             return null;
         PostEntity toSave = new PostEntity();
@@ -47,11 +47,11 @@ public class PostService {
     public PostEntity updateOnePostById(Long postId, PostUpdateDTO updateDTO) {
         Optional<PostEntity> postEntity = postRepo.findById(postId);
         if (postEntity.isPresent()){
-            PostEntity toUpdate = postEntity.get();
-            toUpdate.setText(updateDTO.getText());
-            toUpdate.setTitle(updateDTO.getTitle());
-            postRepo.save(toUpdate);
-            return toUpdate;
+            PostEntity toUpdatePost = postEntity.get();
+            toUpdatePost.setText(updateDTO.getText());
+            toUpdatePost.setTitle(updateDTO.getTitle());
+            postRepo.save(toUpdatePost);
+            return toUpdatePost;
         }
         return null;
     }
