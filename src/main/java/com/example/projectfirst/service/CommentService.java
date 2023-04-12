@@ -1,15 +1,17 @@
 package com.example.projectfirst.service;
 
 import com.example.projectfirst.dto.CommentCreateDTO;
+import com.example.projectfirst.dto.CommentResponseDTO;
 import com.example.projectfirst.dto.CommentUpdateDTO;
-import com.example.projectfirst.entity.CommentEntity;
-import com.example.projectfirst.entity.PostEntity;
-import com.example.projectfirst.entity.UserEntity;
+import com.example.projectfirst.entity.Comment;
+import com.example.projectfirst.entity.Post;
+import com.example.projectfirst.entity.User;
 import com.example.projectfirst.repository.CommentRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -24,38 +26,41 @@ public class CommentService {
         this.postService = postService;
     }
 
-    public List<CommentEntity> getAllCommentsWithParams(Optional<Long> userId, Optional<Long> postId) {
+    public List<CommentResponseDTO> getAllCommentsWithParams(Optional<Long> userId, Optional<Long> postId) {
+        List<Comment> comments;
         if (userId.isPresent() && postId.isPresent())
-            return commentRepo.findByUserEntityIdAndPostEntityId(userId.get(), postId.get());
+            comments = commentRepo.findByUserIdAndPostId(userId.get(), postId.get());
         else if(userId.isPresent())
-            return commentRepo.findByUserEntityId(userId.get());
+            comments = commentRepo.findByUserId(userId.get());
         else if (postId.isPresent())
-            return commentRepo.findByPostEntityId(postId.get());
-        else return commentRepo.findAll();
+            comments = commentRepo.findByPostId(postId.get());
+        else
+            comments = commentRepo.findAll();
+        return comments.stream().map(comment -> new CommentResponseDTO(comment)).collect(Collectors.toList());
     }
 
-    public CommentEntity getOneCommentById(Long commentId) {
+    public Comment getOneCommentById(Long commentId) {
         return commentRepo.findById(commentId).orElse(null);
     }
 
-    public CommentEntity createOneComment(CommentCreateDTO newCommentDTO) {
-        UserEntity userEntity = userService.getOneUserById(newCommentDTO.getUserId());
-        PostEntity postEntity = postService.getOnePostById(newCommentDTO.getPostId());
-        if (userEntity != null && postEntity != null){
-            CommentEntity toSaveComment = new CommentEntity();
+    public Comment createOneComment(CommentCreateDTO newCommentDTO) {
+        User user = userService.getOneUserById(newCommentDTO.getUserId());
+        Post post = postService.getOnePostById(newCommentDTO.getPostId());
+        if (user != null && post != null){
+            Comment toSaveComment = new Comment();
             toSaveComment.setId(newCommentDTO.getId());
-            toSaveComment.setPostEntity(postEntity);
-            toSaveComment.setUserEntity(userEntity);
+            toSaveComment.setPost(post);
+            toSaveComment.setUser(user);
             toSaveComment.setText(newCommentDTO.getText());
             return commentRepo.save(toSaveComment);
         }else
             return null;
     }
 
-    public CommentEntity updateOneCommentById(Long commentId, CommentUpdateDTO updateComment) {
-        Optional<CommentEntity> commentEntity = commentRepo.findById(commentId);
+    public Comment updateOneCommentById(Long commentId, CommentUpdateDTO updateComment) {
+        Optional<Comment> commentEntity = commentRepo.findById(commentId);
         if (commentEntity.isPresent()){
-            CommentEntity toUpdateComment = commentEntity.get();
+            Comment toUpdateComment = commentEntity.get();
             toUpdateComment.setText(updateComment.getText());
             return commentRepo.save(toUpdateComment);
         }else

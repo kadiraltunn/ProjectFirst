@@ -1,15 +1,15 @@
 package com.example.projectfirst.repository;
 
-import com.example.projectfirst.entity.CommentEntity;
+import com.example.projectfirst.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CommentRepo extends JpaRepository<CommentEntity, Long> {
+public interface CommentRepo extends JpaRepository<Comment, Long> {
 
-    List<CommentEntity> findByUserEntityIdAndPostEntityId(Long userId, Long postId);
+    List<Comment> findByUserIdAndPostId(Long userId, Long postId);
 
-    List<CommentEntity> findByUserEntityId(Long userId);
+    List<Comment> findByUserId(Long userId);
 
-    List<CommentEntity> findByPostEntityId(Long postId);
+    List<Comment> findByPostId(Long postId);
 }

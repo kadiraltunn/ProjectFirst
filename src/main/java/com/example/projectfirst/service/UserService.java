@@ -1,6 +1,6 @@
 package com.example.projectfirst.service;
 
-import com.example.projectfirst.entity.UserEntity;
+import com.example.projectfirst.entity.User;
 import com.example.projectfirst.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +17,22 @@ public class UserService {
     }
 
 
-    public List<UserEntity> getAllUsers() {
+    public List<User> getAllUsers() {
         return userRepo.findAll();
     }
 
-    public UserEntity saveOneUser(UserEntity newUser) {
+    public User createOneUser(User newUser) {
         return userRepo.save(newUser);
     }
 
-    public UserEntity getOneUserById(Long userId) {
+    public User getOneUserById(Long userId) {
         return userRepo.findById(userId).orElse(null);
     }
 
-    public UserEntity updateOneUser(Long userId, UserEntity newUser) {
-        Optional<UserEntity> userEntity = userRepo.findById(userId);
+    public User updateOneUserById(Long userId, User newUser) {
+        Optional<User> userEntity = userRepo.findById(userId);
         if (userEntity.isPresent()){
-            UserEntity foundUser = userEntity.get();
+            User foundUser = userEntity.get();
             foundUser.setUserName(newUser.getUserName());
             foundUser.setPassword(newUser.getPassword());
             userRepo.save(foundUser);
